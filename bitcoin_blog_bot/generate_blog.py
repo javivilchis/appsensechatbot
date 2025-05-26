@@ -6,24 +6,58 @@ from datetime import datetime
 # generate_blog.py
 from openai import OpenAI
 import os
+# bitcoin_blog_bot/generate_blog.py
 
-def search_and_scrape_bitcoin_articles():
-    urls = [
-       
-        "https://www.coindesk.com",
-        "https://bitcoinmagazine.com/",
-        "https://www.artificialintelligence-news.com/",
-        "https://news.mit.edu/topic/artificial-intelligence2",
-        "https://www.wsj.com/tech/ai",
-        "https://ai.google/latest-news/",
-        "https://blog.google/technology/developers/google-io-2025-collection/",
-        "https://blog.google/",
-    ]
+import requests
+from bs4 import BeautifulSoup
+from datetime import datetime
+from openai import OpenAI
+import os
 
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# Mapping categories to prompts and source URLs
+CATEGORY_CONFIG = {
+    "bitcoin": {
+        "prompt": "You are a professional financial blogger. Write a new weekly blog post about Bitcoin and blockchain market trends.",
+        "urls": [
+            "https://www.coindesk.com",
+            "https://bitcoinmagazine.com/"
+        ]
+    },
+    "ai": {
+        "prompt": "You are a professional tech blogger. Write a blog post analyzing AI trends in business, research, and global impact.",
+        "urls": [
+            "https://www.artificialintelligence-news.com/",
+            "https://news.mit.edu/topic/artificial-intelligence2",
+            "https://www.wsj.com/tech/ai"
+        ]
+    },
+    "google-ai": {
+        "prompt": "You are a developer advocate. Summarize Google's latest AI announcements and innovations in a blog post.",
+        "urls": [
+            "https://ai.google/latest-news/",
+            "https://blog.google/technology/developers/google-io-2025-collection/",
+            "https://blog.google/"
+        ]
+    },
+    "flow": {
+        "prompt": "You are a professional blogger. Write a blog post about the latest updates and features in Flow using veo3.",
+        "urls": [
+            "https://labs.google/flow/about#overview",
+            "https://labs.google/",
+            "https://developers.google.com/flow",
+            "https://labs.google/fx/tools/flow/faq"
+        ]
+    },
+}
+
+
+def scrape_urls(urls):
     contents = []
     for url in urls:
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=10)
             soup = BeautifulSoup(response.text, "html.parser")
             paragraphs = soup.find_all('p')
             text = "\n".join(p.get_text() for p in paragraphs)
@@ -33,13 +67,16 @@ def search_and_scrape_bitcoin_articles():
     return contents
 
 
+def generate_blog(category: str) -> str:
+    config = CATEGORY_CONFIG.get(category.lower())
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    if not config:
+        raise ValueError(f"Unknown category '{category}'. Available: {list(CATEGORY_CONFIG.keys())}")
 
-def generate_bitcoin_blog(content_list):
-    #You are a professional financial blogger. Write a new weekly blog post about Bitcoin.
+    sources = scrape_urls(config["urls"])
+
     prompt = f"""
-        You are a professional artificial intelligence blogger. Write a new weekly blog post about Google Announcements on Artificial Intelligence.
+        {config["prompt"]}
 
         Use the following articles as source material, but write everything in your own words.
         Be engaging, clear, and insightful. The post should be 600–800 words.
@@ -47,7 +84,7 @@ def generate_bitcoin_blog(content_list):
         IMPORTANT: Format the output as a full HTML document, including the following structure:
         <html>
         <head>
-            <title>Weekly Bitcoin Blog</title>
+            <title>Weekly Blog Update</title>
         </head>
         <body>
             <h1>Title of the Blog</h1>
@@ -62,35 +99,27 @@ def generate_bitcoin_blog(content_list):
 
         Here are the sources to draw insights from:
 
-    {''.join(content_list)}
+        {"".join(sources)}
     """
+
     response = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "You are a finance blogger that outputs HTML-formatted blog posts."},
+            {"role": "system", "content": "You are a senior blogger that outputs HTML-formatted articles."},
             {"role": "user", "content": prompt}
         ]
     )
 
     return response.choices[0].message.content.strip()
 
-    response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": "You are a finance blogger."},
-            {"role": "user", "content": prompt}
-        ]
-    )
 
-    return response.choices[0].message.content.strip()
-
-def save_blog_to_file(blog_post):
+def save_blog_to_file(blog_post, category):
     today = datetime.today().strftime('%Y-%m-%d')
-    filename = f"_posts/{today}-bitcoin-weekly-update.md"
+    filename = f"_posts/{today}-{category}-weekly-update.md"
     os.makedirs("_posts", exist_ok=True)
     with open(filename, "w") as f:
         f.write(f"""---
-title: \"Weekly Bitcoin Update - {today}\"
+title: \"Weekly {category.capitalize()} Update - {today}\"
 date: {today}
 layout: post
 ---
@@ -99,8 +128,8 @@ layout: post
 """)
     print(f"Saved blog as {filename}")
 
-if __name__ == "__main__":
-    articles = search_and_scrape_bitcoin_articles()
-    blog = generate_bitcoin_blog(articles)
-    save_blog_to_file(blog)
 
+if __name__ == "__main__":
+    category = "flow"  # change this to "ai" or "google-ai" as needed
+    blog = generate_blog(category)
+    save_blog_to_file(blog, category)
