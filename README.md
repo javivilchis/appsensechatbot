@@ -62,6 +62,12 @@ Or modify main.py as needed to suit your interaction style.
 ### 📁 Project Structure
 
 ```
+
+### Run the app to generate the blog
+```
+python generate_blog.py
+```
+
 appsensechatbot/
 ├── main.py
 ├── chatbot.py
