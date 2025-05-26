@@ -9,8 +9,15 @@ import os
 
 def search_and_scrape_bitcoin_articles():
     urls = [
-        "https://www.coindesk.com/markets/2025/04/15/bitcoin-price-analysis/",
-        "https://bitcoinmagazine.com/markets/bitcoin-weekly-update",
+       
+        "https://www.coindesk.com",
+        "https://bitcoinmagazine.com/",
+        "https://www.artificialintelligence-news.com/",
+        "https://news.mit.edu/topic/artificial-intelligence2",
+        "https://www.wsj.com/tech/ai",
+        "https://ai.google/latest-news/",
+        "https://blog.google/technology/developers/google-io-2025-collection/",
+        "https://blog.google/",
     ]
 
     contents = []
@@ -30,8 +37,9 @@ def search_and_scrape_bitcoin_articles():
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_bitcoin_blog(content_list):
+    #You are a professional financial blogger. Write a new weekly blog post about Bitcoin.
     prompt = f"""
-        You are a professional financial blogger. Write a new weekly blog post about Bitcoin.
+        You are a professional artificial intelligence blogger. Write a new weekly blog post about Google Announcements on Artificial Intelligence.
 
         Use the following articles as source material, but write everything in your own words.
         Be engaging, clear, and insightful. The post should be 600–800 words.
