@@ -7,7 +7,8 @@ from datetime import datetime
 from openai import OpenAI
 import os
 # bitcoin_blog_bot/generate_blog.py
-
+from duckduckgo_search import DDGS
+import logging
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -15,7 +16,7 @@ from openai import OpenAI
 import os
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
+logging.basicConfig(level=logging.INFO)
 # Mapping categories to prompts and source URLs
 CATEGORY_CONFIG = {
     "bitcoin": {
@@ -50,6 +51,14 @@ CATEGORY_CONFIG = {
             "https://labs.google/fx/tools/flow/faq"
         ]
     },
+    "penny": {
+        "prompt": "You are a professional blog post writer and SEO expert with emphasis on engaging content with web development and artificial intelligence.",
+        "urls": [
+            "https://www.kiplinger.com/personal-finance/farewell-to-the-penny-u-s-treasury-ends-production-of-one-cent-coin",
+            "https://www.pbs.org/newshour/nation/u-s-mint-moves-ahead-with-plans-to-kill-the-penny",
+            "https://www.cnn.com/2025/05/22/business/us-discontinue-penny"
+        ]
+    }
 }
 
 
@@ -57,15 +66,33 @@ def scrape_urls(urls):
     contents = []
     for url in urls:
         try:
+            logging.info(f"Scraping: {url}")
             response = requests.get(url, timeout=10)
             soup = BeautifulSoup(response.text, "html.parser")
             paragraphs = soup.find_all('p')
             text = "\n".join(p.get_text() for p in paragraphs)
             contents.append(text[:3000])
         except Exception as e:
+            logging.error(f"Error scraping {url}: {e}")
             print(f"Error scraping {url}: {e}")
     return contents
 
+def duckduckgo_results(keywords, max_results=5):
+    contents = []
+    with DDGS() as ddgs:
+        for kw in keywords:
+            logging.info(f"Searching DuckDuckGo for: {kw}")
+            for r in ddgs.text(kw, region="wt-wt", safesearch="Moderate", max_results=max_results):
+                url = r.get("href")
+                if url:
+                    try:
+                        response = requests.get(url, timeout=10)
+                        soup = BeautifulSoup(response.text, "html.parser")
+                        text = "\n".join(p.get_text() for p in soup.select("p"))
+                        contents.append(text[:3000])
+                    except Exception as e:
+                        logging.warning(f"Error fetching {url}: {e}")
+    return contents
 
 def generate_blog(category: str) -> str:
     config = CATEGORY_CONFIG.get(category.lower())
@@ -77,6 +104,7 @@ def generate_blog(category: str) -> str:
 
     prompt = f"""
         {config["prompt"]}
+        Make the blog post sound as human and as engaging as possible, add real world examples and make it as informative as possible.
 
         Use the following articles as source material, but write everything in your own words.
         Be engaging, clear, and insightful. The post should be 600–800 words.
@@ -130,6 +158,6 @@ layout: post
 
 
 if __name__ == "__main__":
-    category = "flow"  # change this to "ai" or "google-ai" as needed
+    category = "penny"  # change this to "ai" or "google-ai" as needed
     blog = generate_blog(category)
     save_blog_to_file(blog, category)
