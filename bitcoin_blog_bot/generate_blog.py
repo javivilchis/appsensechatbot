@@ -143,26 +143,63 @@ def update_index_html():
     )
 
     index_html = f"""<!DOCTYPE html>
-        <html lang="en">
-        <head>
-        <meta charset="UTF-8">
-        <title>Weekly Blog Posts</title>
-        <style>
-            body {{ font-family: sans-serif; padding: 2rem; }}
-            h1 {{ color: #333; }}
-            ul {{ list-style-type: none; padding-left: 0; }}
-            li {{ margin-bottom: 1rem; }}
-            a {{ text-decoration: none; color: #007acc; }}
-        </style>
-        </head>
-        <body>
-        <h1>Weekly Blog Posts</h1>
-        <ul>
-            {list_items}
-        </ul>
-        </body>
-        </html>
-        """
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weekly Blog Posts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {{
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+            color: #222;
+            padding: 2rem;
+            margin: 0;
+            animation: fadeIn 1s ease-in-out;
+        }}
+        h1 {{
+            font-size: 2.5rem;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }}
+        ul {{
+            list-style-type: none;
+            padding-left: 0;
+        }}
+        li {{
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }}
+        li:hover {{
+            transform: translateY(-3px);
+        }}
+        a {{
+            text-decoration: none;
+            color: #007acc;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }}
+        a:hover {{
+            text-decoration: underline;
+        }}
+        @keyframes fadeIn {{
+            0% {{ opacity: 0; transform: translateY(20px); }}
+            100% {{ opacity: 1; transform: translateY(0); }}
+        }}
+    </style>
+</head>
+<body>
+    <h1>Weekly Blog Posts</h1>
+    <ul>
+        {list_items}
+    </ul>
+</body>
+</html>
+"""
 
     with open(os.path.join(posts_dir, "index.html"), "w") as f:
         f.write(index_html)

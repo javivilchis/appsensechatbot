@@ -3,13 +3,22 @@ layout: home
 title: "Bitcoin Blog Bot"
 ---
 
-Welcome to the Bitcoin Weekly Blog — generated every Monday by an AI agent.
+Welcome to the **Bitcoin Weekly Blog**, an AI-powered content generator created and maintained by [Javier Vilchis](https://www.javivilchis.com) — a seasoned full-stack developer specializing in:
 
-### How to run project
-clone the script, once you download it make sure you have your open ai key added to your terminal and then run:
-`export OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx` this will add it to your env file within your system to be used within the project since we are runnning it using python.
+- Machine Learning & AI Engineering  
+- Web & Mobile App Development  
+- UI/UX Design with SEO & SEM integration  
+- Solutions for startups, agencies, and enterprises across all industries
 
-after that, navigate to where we have the 'generate_blog.py' this is to run it manually before you deploy it to github pages.
-after that, run the following script: `python generate_blog.py` 
+Each Monday, a custom-trained AI agent automatically publishes insightful Bitcoin-related blog posts, ensuring fresh and relevant content.
 
-you should see the generated blog inside the ./posts/ folder.
+---
+
+### 🛠️ How to Run the Project
+
+To run the blog generator locally before deploying to GitHub Pages:
+
+1. **Clone this repository**  
+2. Set your OpenAI API key in your environment:  
+   ```bash
+   export OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
