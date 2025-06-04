@@ -1,22 +1,17 @@
 # bitcoin_blog_bot/generate_blog.py
 
+import os
 import requests
+import logging
 from bs4 import BeautifulSoup
 from datetime import datetime
-# generate_blog.py
+from duckduckgo_search import DDGS
 from openai import OpenAI
-import os
-# bitcoin_blog_bot/generate_blog.py
-
-import requests
-from bs4 import BeautifulSoup
-from datetime import datetime
-from openai import OpenAI
-import os
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+logging.basicConfig(level=logging.INFO)
 
-# Mapping categories to prompts and source URLs
+# Static category configuration
 CATEGORY_CONFIG = {
     "bitcoin": {
         "prompt": "You are a professional financial blogger. Write a new weekly blog post about Bitcoin and blockchain market trends.",
@@ -50,86 +45,157 @@ CATEGORY_CONFIG = {
             "https://labs.google/fx/tools/flow/faq"
         ]
     },
+    "penny": {
+        "prompt": "You are a professional blog post writer and SEO expert with emphasis on engaging content with web development and artificial intelligence.",
+        "urls": [
+            "https://www.kiplinger.com/personal-finance/farewell-to-the-penny-u-s-treasury-ends-production-of-one-cent-coin",
+            "https://www.pbs.org/newshour/nation/u-s-mint-moves-ahead-with-plans-to-kill-the-penny",
+            "https://www.cnn.com/2025/05/22/business/us-discontinue-penny"
+        ]
+    }
 }
-
 
 def scrape_urls(urls):
     contents = []
     for url in urls:
         try:
+            logging.info(f"Scraping: {url}")
             response = requests.get(url, timeout=10)
             soup = BeautifulSoup(response.text, "html.parser")
             paragraphs = soup.find_all('p')
             text = "\n".join(p.get_text() for p in paragraphs)
             contents.append(text[:3000])
         except Exception as e:
-            print(f"Error scraping {url}: {e}")
+            logging.error(f"Error scraping {url}: {e}")
     return contents
 
+def fetch_urls_from_duckduckgo(query, max_results=5):
+    urls = []
+    with DDGS() as ddgs:
+        logging.info(f"Searching DuckDuckGo for: {query}")
+        results = ddgs.text(query, region="wt-wt", safesearch="Moderate", max_results=max_results)
+        for r in results:
+            if r.get("href"):
+                urls.append(r["href"])
+    return urls
 
 def generate_blog(category: str) -> str:
     config = CATEGORY_CONFIG.get(category.lower())
 
     if not config:
-        raise ValueError(f"Unknown category '{category}'. Available: {list(CATEGORY_CONFIG.keys())}")
+        logging.warning(f"Unknown category '{category}', using DuckDuckGo fallback.")
+        fallback_urls = fetch_urls_from_duckduckgo(category, max_results=5)
+        if not fallback_urls:
+            raise ValueError(f"No results found for category '{category}' via DuckDuckGo.")
+        prompt = f"You are a professional content writer. Write a blog post based on recent updates and insights related to '{category}'."
+        sources = scrape_urls(fallback_urls)
+    else:
+        prompt = config["prompt"]
+        sources = scrape_urls(config["urls"])
 
-    sources = scrape_urls(config["urls"])
+    full_prompt = f"""
+{prompt}
+Make the blog post sound as human and as engaging as possible, add real world examples and make it as informative as possible.
 
-    prompt = f"""
-        {config["prompt"]}
+Use the following articles as source material, but write everything in your own words.
+Be engaging, clear, and insightful. The post should be 600–800 words.
 
-        Use the following articles as source material, but write everything in your own words.
-        Be engaging, clear, and insightful. The post should be 600–800 words.
+IMPORTANT: Format the output as a full HTML document, including the following structure:
+<html>
+<head>
+    <title>Weekly Blog Update</title>
+</head>
+<body>
+    <h1>Title of the Blog</h1>
+    <h2>Subtitle with date and author</h2>
+    <p>Intro paragraph with strong opinion or overview.</p>
+    <p>Use <strong>bold</strong> text for key points and <a href="https://example.com" title="Example Link" target="_blank">links</a> where helpful.</p>
+    ...
+</body>
+</html>
 
-        IMPORTANT: Format the output as a full HTML document, including the following structure:
-        <html>
-        <head>
-            <title>Weekly Blog Update</title>
-        </head>
-        <body>
-            <h1>Title of the Blog</h1>
-            <h2>Subtitle with date and author</h2>
-            <p>Intro paragraph with strong opinion or overview.</p>
-            <p>Use <strong>bold</strong> text for key points and <a href="https://example.com" title="Example Link" target="_blank">links</a> where helpful.</p>
-            ...
-        </body>
-        </html>
+Do NOT escape the HTML (no backslashes before tags). Just return the clean HTML content.
 
-        Do NOT escape the HTML (no backslashes before tags). Just return the clean HTML content.
+Here are the sources to draw insights from:
 
-        Here are the sources to draw insights from:
-
-        {"".join(sources)}
-    """
+{"".join(sources)}
+"""
 
     response = client.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "You are a senior blogger that outputs HTML-formatted articles."},
-            {"role": "user", "content": prompt}
+            {"role": "user", "content": full_prompt}
         ]
     )
 
     return response.choices[0].message.content.strip()
+def update_index_html():
+    posts_dir = "_posts"
+    post_files = sorted(
+        [f for f in os.listdir(posts_dir) if f.endswith(".md")],
+        reverse=True
+    )
+
+    list_items = "\n".join(
+        [f'<li><a href="{fname}">{fname.replace("-", " ").replace(".md", "").title()}</a></li>'
+         for fname in post_files]
+    )
+
+    index_html = f"""<!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta charset="UTF-8">
+        <title>Weekly Blog Posts</title>
+        <style>
+            body {{ font-family: sans-serif; padding: 2rem; }}
+            h1 {{ color: #333; }}
+            ul {{ list-style-type: none; padding-left: 0; }}
+            li {{ margin-bottom: 1rem; }}
+            a {{ text-decoration: none; color: #007acc; }}
+        </style>
+        </head>
+        <body>
+        <h1>Weekly Blog Posts</h1>
+        <ul>
+            {list_items}
+        </ul>
+        </body>
+        </html>
+        """
+
+    with open(os.path.join(posts_dir, "index.html"), "w") as f:
+        f.write(index_html)
+    print("Updated _posts/index.html")
 
 
 def save_blog_to_file(blog_post, category):
     today = datetime.today().strftime('%Y-%m-%d')
     filename = f"_posts/{today}-{category}-weekly-update.md"
     os.makedirs("_posts", exist_ok=True)
-    with open(filename, "w") as f:
+    with open(filename, "w", encoding="utf-8") as f:
         f.write(f"""---
-title: \"Weekly {category.capitalize()} Update - {today}\"
+title: "Weekly {category.capitalize()} Update - {today}"
 date: {today}
 layout: post
 ---
 
 {blog_post}
 """)
-    print(f"Saved blog as {filename}")
+    logging.info(f"Saved blog as {filename}")
 
 
 if __name__ == "__main__":
-    category = "flow"  # change this to "ai" or "google-ai" as needed
+    import argparse
+    parser = argparse.ArgumentParser(description="Generate blog post by category.")
+    parser.add_argument("--category", required=True, help="Blog topic category (e.g., bitcoin, ai, flow, or any new topic)")
+    args = parser.parse_args()
+
+    blog = generate_blog(args.category)
+    save_blog_to_file(blog, args.category)
+
+if __name__ == "__main__":
+    category = "penny"  # change this to your category
     blog = generate_blog(category)
     save_blog_to_file(blog, category)
+    update_index_html()
