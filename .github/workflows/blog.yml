@@ -2,8 +2,8 @@ name: Generate Bitcoin Blog
 
 on:
   schedule:
-    - cron: '0 9 * * 1'  # Every Monday at 9am UTC
-  workflow_dispatch:  # Allow manual trigger
+    - cron: "0 8 * * *"  # runs every day at 8:00 UTC
+  workflow_dispatch:
 
 jobs:
   build:
@@ -27,15 +27,22 @@ jobs:
       - name: Generate blog post
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python generate_blog.py
+        run: python bitcoin_blog_bot/generate_blog.py --category artificial-intelligence
 
       - name: Commit blog to main branch
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add _posts/
-          git diff --cached --quiet || git commit -m "Weekly blog update"
+          git diff --cached --quiet || git commit -m "Daily blog update"
           git push
+
+      - name: Tag the commit
+        run: |
+          DATE_TAG=$(date +'%Y-%m-%d')
+          TAG_NAME="Generate Bitcoin Blog - $DATE_TAG"
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
 
       - name: Deploy to GitHub Pages
         run: |

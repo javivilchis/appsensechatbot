@@ -230,9 +230,4 @@ if __name__ == "__main__":
 
     blog = generate_blog(args.category)
     save_blog_to_file(blog, args.category)
-
-if __name__ == "__main__":
-    category = "penny"  # change this to your category
-    blog = generate_blog(category)
-    save_blog_to_file(blog, category)
     update_index_html()
