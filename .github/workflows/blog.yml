@@ -27,7 +27,7 @@ jobs:
       - name: Generate blog post
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python bitcoin_blog_bot/generate_blog.py --category artificial-intelligence
+        run: python bitcoin_blog_bot/generate_blog.py --categories bitcoin,ai,technology,ai-security
 
       - name: Commit blog to main branch
         run: |

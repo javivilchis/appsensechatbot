@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from duckduckgo_search import DDGS
 from openai import OpenAI
+import xml.etree.ElementTree as ET
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 logging.basicConfig(level=logging.INFO)
@@ -130,6 +131,7 @@ Here are the sources to draw insights from:
     )
 
     return response.choices[0].message.content.strip()
+
 def update_index_html():
     posts_dir = "_posts"
     post_files = sorted(
@@ -205,17 +207,68 @@ def update_index_html():
         f.write(index_html)
     print("Updated _posts/index.html")
 
+def update_rss_feed():
+    posts_dir = "_posts"
+    rss_file = os.path.join(posts_dir, "rss.xml")
+
+    items = []
+    post_files = sorted(
+        [f for f in os.listdir(posts_dir) if f.endswith(".md")],
+        reverse=True
+    )
+
+    for post in post_files:
+        date_part = post.split("-")[:3]
+        date = "-".join(date_part)
+        title = post.replace(".md", "").replace("-", " ").title()
+        link = f"https://<YOUR_DOMAIN>/{post}"
+
+        item = f"""
+        <item>
+            <title>{title}</title>
+            <link>{link}</link>
+            <pubDate>{date}</pubDate>
+            <guid>{link}</guid>
+        </item>
+        """
+        items.append(item)
+
+    rss_content = f"""<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+    <title>Bitcoin Blog Bot RSS Feed</title>
+    <link>https://<YOUR_DOMAIN>/</link>
+    <description>Daily tech & crypto blog</description>
+    {''.join(items)}
+</channel>
+</rss>"""
+
+    with open(rss_file, "w") as f:
+        f.write(rss_content)
+    logging.info("RSS feed updated.")
 
 def save_blog_to_file(blog_post, category):
     today = datetime.today().strftime('%Y-%m-%d')
     filename = f"_posts/{today}-{category}-weekly-update.md"
     os.makedirs("_posts", exist_ok=True)
+
+    # SEO metadata block
+    seo_meta = f"""
+<!-- SEO Meta Tags -->
+<meta name="description" content="Explore the latest updates and expert insights on {category}. Stay ahead with our weekly {category} trends and analysis.">
+<meta name="keywords" content="{category}, artificial intelligence, machine learning, bitcoin, ai trends, technology blog, updates, weekly blog">
+<meta name="author" content="Bitcoin Blog Bot">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+"""
+
     with open(filename, "w", encoding="utf-8") as f:
         f.write(f"""---
 title: "Weekly {category.capitalize()} Update - {today}"
 date: {today}
 layout: post
 ---
+
+{seo_meta}
 
 {blog_post}
 """)
@@ -224,10 +277,15 @@ layout: post
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="Generate blog post by category.")
-    parser.add_argument("--category", required=True, help="Blog topic category (e.g., bitcoin, ai, flow, or any new topic)")
+
+    parser = argparse.ArgumentParser(description="Generate blog posts by category.")
+    parser.add_argument("--categories", required=True, help="Comma-separated blog categories")
     args = parser.parse_args()
 
-    blog = generate_blog(args.category)
-    save_blog_to_file(blog, args.category)
+    for category in args.categories.split(","):
+        category = category.strip()
+        blog = generate_blog(category)
+        save_blog_to_file(blog, category)
+
     update_index_html()
+    update_rss_feed()

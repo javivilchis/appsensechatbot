@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+    <title>Bitcoin Blog Bot RSS Feed</title>
+    <link>https://<YOUR_DOMAIN>/</link>
+    <description>Daily tech & crypto blog</description>
+    
+        <item>
+            <title>2025 06 10 Technology Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-10-technology-weekly-update.md</link>
+            <pubDate>2025-06-10</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-10-technology-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 06 10 Flow Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-10-flow-weekly-update.md</link>
+            <pubDate>2025-06-10</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-10-flow-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 06 10 Bitcoin Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-10-bitcoin-weekly-update.md</link>
+            <pubDate>2025-06-10</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-10-bitcoin-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 06 10 Artificial Intelligence Today Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-10-artificial-intelligence-today-weekly-update.md</link>
+            <pubDate>2025-06-10</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-10-artificial-intelligence-today-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 06 10 Ai Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-10-ai-weekly-update.md</link>
+            <pubDate>2025-06-10</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-10-ai-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 06 10 Ai Security Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-10-ai-security-weekly-update.md</link>
+            <pubDate>2025-06-10</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-10-ai-security-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 06 03 Penny Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-03-penny-weekly-update.md</link>
+            <pubDate>2025-06-03</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-03-penny-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 06 03 Cryptocurrency Today Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-03-cryptocurrency-today-weekly-update.md</link>
+            <pubDate>2025-06-03</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-03-cryptocurrency-today-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 06 03 Crypto Nft Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-03-crypto-nft-weekly-update.md</link>
+            <pubDate>2025-06-03</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-03-crypto-nft-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 06 03 Artificial Intelligence Today Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-06-03-artificial-intelligence-today-weekly-update.md</link>
+            <pubDate>2025-06-03</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-06-03-artificial-intelligence-today-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 05 25 Flow Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-05-25-flow-weekly-update.md</link>
+            <pubDate>2025-05-25</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-05-25-flow-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 05 24 Bitcoin Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-05-24-bitcoin-weekly-update.md</link>
+            <pubDate>2025-05-24</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-05-24-bitcoin-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 05 19 Bitcoin Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-05-19-bitcoin-weekly-update.md</link>
+            <pubDate>2025-05-19</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-05-19-bitcoin-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 04 28 Bitcoin Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-04-28-bitcoin-weekly-update.md</link>
+            <pubDate>2025-04-28</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-04-28-bitcoin-weekly-update.md</guid>
+        </item>
+        
+        <item>
+            <title>2025 04 23 Bitcoin Weekly Update</title>
+            <link>https://<YOUR_DOMAIN>/2025-04-23-bitcoin-weekly-update.md</link>
+            <pubDate>2025-04-23</pubDate>
+            <guid>https://<YOUR_DOMAIN>/2025-04-23-bitcoin-weekly-update.md</guid>
+        </item>
+        
+</channel>
+</rss>
