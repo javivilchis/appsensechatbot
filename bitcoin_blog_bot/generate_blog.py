@@ -5,6 +5,7 @@ import requests
 import logging
 from bs4 import BeautifulSoup
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from duckduckgo_search import DDGS
 from openai import OpenAI
 import xml.etree.ElementTree as ET
@@ -248,7 +249,8 @@ def update_rss_feed():
     logging.info("RSS feed updated.")
 
 def save_blog_to_file(blog_post, category):
-    today = datetime.today().strftime('%Y-%m-%d')
+    # Use America/Chicago timezone (Central Time)
+    today = datetime.now(ZoneInfo("America/Chicago")).strftime('%Y-%m-%d')
     filename = f"_posts/{today}-{category}-weekly-update.md"
     os.makedirs("_posts", exist_ok=True)
 
@@ -276,6 +278,19 @@ layout: post
 
 
 if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Generate blog posts by category.")
+    parser.add_argument("--categories", required=True, help="Comma-separated blog categories")
+    args = parser.parse_args()
+
+    for category in args.categories.split(","):
+        category = category.strip()
+        blog = generate_blog(category)
+        save_blog_to_file(blog, category)
+
+    update_index_html()
+    update_rss_feed()
     import argparse
 
     parser = argparse.ArgumentParser(description="Generate blog posts by category.")
