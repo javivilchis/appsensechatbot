@@ -159,6 +159,7 @@ def update_index_html():
             padding: 2rem;
             margin: 0;
             animation: fadeIn 1s ease-in-out;
+            font-size: 18px;
         }}
         h1 {{
             font-size: 2.5rem;
@@ -237,7 +238,7 @@ def update_rss_feed():
     rss_content = f"""<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
 <channel>
-    <title>Bitcoin Blog Bot RSS Feed</title>
+    <title>Blog Bot RSS Feed</title>
     <link>https://<YOUR_DOMAIN>/</link>
     <description>Daily tech & crypto blog</description>
     {''.join(items)}
@@ -259,7 +260,7 @@ def save_blog_to_file(blog_post, category):
 <!-- SEO Meta Tags -->
 <meta name="description" content="Explore the latest updates and expert insights on {category}. Stay ahead with our weekly {category} trends and analysis.">
 <meta name="keywords" content="{category}, artificial intelligence, machine learning, bitcoin, ai trends, technology blog, updates, weekly blog">
-<meta name="author" content="Bitcoin Blog Bot">
+<meta name="author" content="Blog Bot">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 """
 
