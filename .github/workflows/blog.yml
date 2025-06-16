@@ -27,7 +27,7 @@ jobs:
       - name: Generate blog post
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python bitcoin_blog_bot/generate_blog.py --categories bitcoin,ai,technology,ai-security
+        run: python bitcoin_blog_bot/generate_blog.py --categories agentic-ai,ai-security
 
       - name: Commit blog to main branch
         env:
@@ -37,7 +37,7 @@ jobs:
           git config user.email "github-actions@github.com"
           git add _posts/
           git diff --cached --quiet || git commit -m "Daily blog update"
-          git push https://x-access-token:${GH_TOKEN}@github.com/javivilchis/appsensechatbot.git HEAD:main
+          git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/javivilchis/appsensechatbot.git HEAD:main
 
       - name: Tag the commit
         run: |
