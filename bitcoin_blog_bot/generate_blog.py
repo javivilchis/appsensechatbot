@@ -149,7 +149,7 @@ def update_index_html():
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Weekly Blog Posts</title>
+    <title>Blog Posts</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {{
@@ -197,7 +197,7 @@ def update_index_html():
     </style>
 </head>
 <body>
-    <h1>Weekly Blog Posts</h1>
+    <h1>line 200 - Weekly Blog Posts</h1>
     <ul>
         {list_items}
     </ul>
@@ -257,24 +257,24 @@ def save_blog_to_file(blog_post, category):
 
     # SEO metadata block
     seo_meta = f"""
-<!-- SEO Meta Tags -->
-<meta name="description" content="Explore the latest updates and expert insights on {category}. Stay ahead with our weekly {category} trends and analysis.">
-<meta name="keywords" content="{category}, artificial intelligence, machine learning, bitcoin, ai trends, technology blog, updates, weekly blog">
-<meta name="author" content="Blog Bot">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-"""
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Explore the latest updates and expert insights on {category}. Stay ahead with our weekly {category} trends and analysis.">
+    <meta name="keywords" content="{category}, artificial intelligence, machine learning, bitcoin, ai trends, technology blog, updates, weekly blog">
+    <meta name="author" content="Blog Bot">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    """
 
     with open(filename, "w", encoding="utf-8") as f:
         f.write(f"""---
-title: "Weekly {category.capitalize()} Update - {today}"
-date: {today}
-layout: post
----
+        title: "Weekly {category.capitalize()} Update - {today}"
+        date: {today}
+        layout: post
+        ---
 
-{seo_meta}
+        {seo_meta}
 
-{blog_post}
-""")
+        {blog_post}
+    """)
     logging.info(f"Saved blog as {filename}")
 
 
