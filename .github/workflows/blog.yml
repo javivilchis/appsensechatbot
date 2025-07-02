@@ -37,11 +37,11 @@ jobs:
           git config user.email "github-actions@github.com"
           git add _posts/
           
-          if git diff --cached --name-only | grep -qE "^_posts/.*\.md"; then
+          if git diff --cached --name-only | grep -qE "^_posts/"; then
             git commit -m "Daily blog update"
             git push https://x-access-token:${GH_TOKEN}@github.com/javivilchis/appsensechatbot.git main
           else
-            echo "No new .md blog posts. Skipping commit and push."
+            echo "No changes in _posts/. Skipping commit and push."
           fi
       - name: Tag the commit
         run: |
