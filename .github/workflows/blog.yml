@@ -31,15 +31,13 @@ jobs:
 
       - name: Commit blog to main branch
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-      
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add _posts/
           git diff --cached --quiet || git commit -m "Daily blog update"
-          git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/javivilchis/appsensechatbot.git HEAD:main
-
+          git push https://x-access-token:${GH_TOKEN}@github.com/javivilchis/appsensechatbot.git main
       - name: Tag the commit
         run: |
           DATE_TAG=$(date +'%Y-%m-%d')
