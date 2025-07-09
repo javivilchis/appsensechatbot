@@ -2,7 +2,7 @@ name: Generate Bitcoin Blog
 
 on:
   schedule:
-    - cron: "0 8 * * *"  # runs every Monday at 8:00 UTC
+    - cron: "0 8 * * 2"  # runs every Monday at 8:00 UTC
   workflow_dispatch:
 
 jobs:
